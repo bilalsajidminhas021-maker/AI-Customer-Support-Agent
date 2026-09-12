@@ -20,12 +20,12 @@ PASSWORD_SCHEME = "pbkdf2_sha256"
 PASSWORD_ITERATIONS = 260000
 MAX_SENSITIVE_TEXT = 4000
 _SECRET_KEY_PATTERN = re.compile(
-    r"(GOOGLE_API_KEY|BUSINESS_API_KEY|ADMIN_PASSWORD|PASSWORD_HASH|"
+    r"(GOOGLE_API_KEY|BUSINESS_API_KEY|API_KEY|ADMIN_PASSWORD|PASSWORD|PASSWORD_HASH|"
     r"AUTHORIZATION|BEARER|COOKIE|CREDENTIALS?)",
     re.IGNORECASE,
 )
 _SECRET_VALUE_PATTERN = re.compile(
-    r"(?i)(google_api_key|business_api_key|admin_password|password_hash)"
+    r"(?i)(google_api_key|business_api_key|api_key|admin_password|password|password_hash)"
     r"\s*[:=]\s*([^\s,;]+)"
 )
 _BEARER_PATTERN = re.compile(r"(?i)\bbearer\s+[A-Za-z0-9._~+/=-]+")

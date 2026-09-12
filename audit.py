@@ -113,6 +113,8 @@ def log_audit_event(
     safety_reason=None,
     tenant_id=None,
     operation=None,
+    integration_provider=None,
+    integration_status=None,
     duration_ms=None,
     timings_ms=None,
 ):
@@ -146,6 +148,8 @@ def log_audit_event(
         "eligibility": eligibility,
         "safety_reason": safety_reason,
         "operation": operation,
+        "integration_provider": integration_provider,
+        "integration_status": integration_status,
         "duration_ms": duration_ms,
         "timings_ms": timings_ms if isinstance(timings_ms, dict) else {},
     }
