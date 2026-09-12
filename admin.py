@@ -11,6 +11,7 @@ from config import (
     ADMIN_USERNAME,
     BUSINESS_API_BASE_URL,
     BUSINESS_PROVIDER,
+    GOOGLE_API_KEY,
     INPUT_MAX_LENGTH,
     MAX_CONVERSATION_HISTORY,
     MAX_ORCHESTRATION_STEPS,
@@ -90,6 +91,15 @@ def render_admin_area(context: TenantContext):
     if not admin_access_allowed(st.session_state):
         st.subheader("Administrator sign in")
         st.caption("This area contains protected operational information.")
+        with st.expander("Temporary configuration diagnostic"):
+            st.json({
+                "admin_username_present": bool(ADMIN_USERNAME),
+                "admin_password_hash_present": bool(ADMIN_PASSWORD_HASH),
+                "google_api_key_present": bool(GOOGLE_API_KEY),
+                "password_hash_has_pbkdf2_prefix": ADMIN_PASSWORD_HASH.startswith(
+                    "pbkdf2_sha256$"
+                ),
+            })
         username = st.text_input("Username", key="admin_username")
         password = st.text_input("Password", type="password", key="admin_password")
         if st.button("Sign in", key="admin_sign_in"):
