@@ -20,7 +20,7 @@ from config import (
 )
 from evaluate_agent import run_evaluation
 from operational import health_status, production_readiness
-from security import authenticate_admin
+from security import authenticate_admin, verify_password
 from tenant_context import TenantContext
 from tools import CASE_STORAGE
 
@@ -103,6 +103,8 @@ def render_admin_area(context: TenantContext):
         username = st.text_input("Username", key="admin_username")
         password = st.text_input("Password", type="password", key="admin_password")
         if st.button("Sign in", key="admin_sign_in"):
+            password_hash_matches = verify_password(password, ADMIN_PASSWORD_HASH)
+            st.write(f"Password hash verification: {password_hash_matches}")
             if admin_login(st.session_state, username, password):
                 st.rerun()
             st.error("Invalid administrator credentials.")
