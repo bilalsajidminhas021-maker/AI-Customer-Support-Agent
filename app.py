@@ -365,23 +365,23 @@ def get_document_payload(documents):
 # --------------------------------------------------
 
 st.set_page_config(
-    page_title="AI Automation Agent",
+    page_title="AI Customer Support Agent for Businesses",
     page_icon="🤖",
     layout="wide"
 )
 
-st.title("AI Customer Support")
+st.title("AI Customer Support Agent for Businesses")
 st.caption(
-    "Get answers from approved business information, check your order, "
-    "or connect with human support when a request needs review."
+    "Get answers from approved business policies and support documents, "
+    "check customer orders, and connect with human support when a request requires review."
 )
 
 if render_admin_area(DEFAULT_TENANT_CONTEXT):
     st.stop()
 
 st.write(
-    "Upload documents, ask questions, compare information, "
-    "and analyze your documents using AI-powered RAG."
+    "Get answers from approved business policies and support documents, "
+    "check customer orders, and connect with human support when a request requires review."
 )
 
 
@@ -438,7 +438,7 @@ with st.sidebar:
     st.markdown("""
     - Ask questions about products and policies
     - Check orders, invoices, and account details
-    - Compare uploaded documents
+    - Inquire about shipping, returns, and store policies
     - Receive source-backed answers when available
     - Send complex requests to human support
     """)
@@ -472,10 +472,14 @@ else:
         "You can upload a PDF below to continue."
     )
 
-st.subheader("Add support documents")
+st.subheader("Add business support documents")
+st.caption(
+    "Upload approved FAQs, return and refund policies, shipping policies, "
+    "product information, and other customer-support documents."
+)
 
 uploaded_files = st.file_uploader(
-    "Upload one or more additional PDF documents",
+    "Upload approved business support PDFs",
     type=["pdf"],
     accept_multiple_files=True
 )
@@ -483,8 +487,8 @@ uploaded_files = st.file_uploader(
 if not uploaded_files and not knowledge_base_files:
 
     st.info(
-        "Add at least one readable PDF to the knowledge base or upload one "
-        "to begin."
+        "Add at least one approved business support PDF to the knowledge base "
+        "or upload one to begin."
     )
 
 
@@ -501,7 +505,7 @@ if uploaded_files or knowledge_base_files:
         )
 
     if uploaded_files:
-        st.write("### Additional Uploaded Documents")
+        st.write("### Additional Business Support Documents")
 
         for file in uploaded_files:
             st.write(f"📄 {file.name}")
@@ -542,7 +546,7 @@ if uploaded_files or knowledge_base_files:
 
     document_payload = get_document_payload(documents)
 
-    with st.spinner("Preparing documents for search..."):
+    with st.spinner("Preparing business support documents for search..."):
         try:
             vector_db = create_vector_db(document_payload)
             st.session_state["knowledge_index_available"] = True
@@ -553,14 +557,14 @@ if uploaded_files or knowledge_base_files:
                 error="Unexpected error while preparing document search."
             )
             st.error(
-                "The documents could not be prepared for search. "
+                "The business support documents could not be prepared for search. "
                 "Please try again later."
             )
             st.stop()
 
 
     st.success(
-        "Documents indexed successfully! ✅"
+        "Business support documents indexed successfully! ✅"
     )
 
 
@@ -570,13 +574,13 @@ if uploaded_files or knowledge_base_files:
 
     render_conversation_history()
 
-    st.subheader("💬 Ask Your AI Agent")
+    st.subheader("💬 Ask Customer Support")
 
     question = st.text_input(
         "How can we help?",
 
         placeholder=(
-            "Example: Where is my order ORD-1001?"
+            "Example: Where is my order ORD-1001? or What is your return policy?"
         )
     )
 
@@ -586,7 +590,7 @@ if uploaded_files or knowledge_base_files:
     # --------------------------------------------------
 
     if st.button(
-        "🚀 Run Agent",
+        "🚀 Ask Support",
         type="primary"
     ):
 
@@ -700,7 +704,7 @@ if uploaded_files or knowledge_base_files:
             # --------------------------------------------------
 
             with st.spinner(
-                "🔎 Searching across uploaded documents..."
+                "🔎 Searching business support documents..."
             ):
 
                 try:
@@ -732,7 +736,7 @@ if uploaded_files or knowledge_base_files:
                         error="Unexpected error during document retrieval."
                     )
                     st.error(
-                        "The documents could not be searched right now. "
+                        "The business support documents could not be searched right now. "
                         "Please try again later."
                     )
                     st.stop()
