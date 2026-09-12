@@ -1,0 +1,10 @@
+venv/
+.env
+__pycache__/
+*.pyc
+*.pyo
+support_cases.json
+audit_logs.jsonl
+execution_audit.jsonl
+*.tmp
+*.log

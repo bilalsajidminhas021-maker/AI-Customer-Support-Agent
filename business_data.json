@@ -1,0 +1,50 @@
+{
+  "orders": {
+    "ORD-1001": {
+      "customer": "Demo Customer",
+      "status": "Shipped",
+      "tracking_number": "TRK-458921",
+      "expected_delivery": "September 10, 2026"
+    },
+    "ORD-1002": {
+      "customer": "Demo Customer",
+      "status": "Processing",
+      "tracking_number": "Not available yet",
+      "expected_delivery": "September 13, 2026"
+    },
+    "ORD-1003": {
+      "customer": "Demo Customer",
+      "status": "Delivered",
+      "tracking_number": "TRK-772341",
+      "expected_delivery": "September 5, 2026"
+    }
+  },
+  "billing_records": {
+    "ACC-1001": {
+      "customer": "Demo Customer",
+      "invoice": "INV-2026-1001",
+      "amount": "$149.99",
+      "payment_status": "Paid",
+      "billing_date": "September 1, 2026"
+    },
+    "ACC-1002": {
+      "customer": "Demo Customer",
+      "invoice": "INV-2026-1002",
+      "amount": "$79.99",
+      "payment_status": "Pending",
+      "billing_date": "September 3, 2026"
+    }
+  },
+  "accounts": {
+    "ACC-1001": {
+      "account_status": "Active",
+      "email": "demo.customer@example.com",
+      "membership": "Premium"
+    },
+    "ACC-1002": {
+      "account_status": "Active",
+      "email": "another.customer@example.com",
+      "membership": "Standard"
+    }
+  }
+}
