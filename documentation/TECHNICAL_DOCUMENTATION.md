@@ -16,7 +16,7 @@
 **Status: IMPLEMENTED.** Customer -> security and tenant context -> session memory -> deterministic preflight -> decision -> controlled orchestration -> action safety -> RAG, tool, or case -> result validation -> response -> audit.
 
 ## 6. Technology Stack
-**Status: IMPLEMENTED.** Python, Streamlit, Gemini/LangChain, FAISS, sentence-transformers, pypdf, JSON storage, standard-library REST, and unittest. No additional Day 14 dependency is required.
+**Status: IMPLEMENTED.** Python, Streamlit, Gemini/LangChain, FAISS, sentence-transformers, pypdf, JSON storage, standard-library REST, and unittest. The client-demo and onboarding materials are documentation-only and add no runtime dependency.
 
 ## 7. Module Responsibilities
 **Status: IMPLEMENTED.** `app.py` owns the Streamlit workflow; `agent.py` owns model classification and grounded generation; `decision.py` owns deterministic decisions; `orchestration.py` bounds multi-step order workflows; `action_safety.py` owns eligibility; `tools.py` validates and executes controlled operations; `knowledge.py` owns retrieval metadata; `case_storage.py` persists cases; `audit.py` records structured events; `security.py` redacts and bounds input; `admin.py` provides protected read-only operations; `operational.py` provides readiness checks.
@@ -67,7 +67,7 @@
 **Status: IMPLEMENTED.** `evaluation_cases.json` and `evaluate_agent.py` define 14 controlled structured scenarios covering routing, escalation, safety, evidence, tenant boundaries, prompt injection, unsupported requests, and admin access.
 
 ## 23. Reliability Testing
-**Status: IMPLEMENTED.** Day 13 tests cover REST failures, missing evidence, low relevance, empty knowledge, case storage failure, audit failure, invalid actions and identifiers, oversized input, prompt injection, and tenant isolation.
+**Status: IMPLEMENTED.** The test suite covers REST failures, missing evidence, low relevance, empty knowledge, case storage failure, audit failure, invalid actions and identifiers, oversized input, prompt injection, tenant isolation, onboarding readiness, and production acceptance. The current verified baseline is 119/119 tests passing, including 22 production-acceptance tests.
 
 ## 24. Deployment Preparation
 **Status: FOUNDATION/PARTIAL.** `operational.py` exposes safe health and readiness status. Deployment still requires managed secrets, production persistence, monitoring, backups, identity review, and environment-specific validation.

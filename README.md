@@ -1,7 +1,14 @@
-# AI Agentic Customer Support Platform
+# AI Customer Support Platform
+
+## Product at a glance
+An operational AI customer-support platform for ecommerce, SaaS, online stores, and service businesses that need grounded answers, controlled business lookups, human escalation, and safe operational visibility.
+
+**Repository:** https://github.com/bilalsajidminhas021-maker/AI-Customer-Support-Agent
+
+**Live demo:** Streamlit Community Cloud deployment is active for this repository. The deployment URL is intentionally not stored in source control; use the deployment URL supplied with the client demonstration environment.
 
 ## Overview
-A reusable Streamlit support platform that combines grounded knowledge retrieval, controlled business tools, human handoff, persistent cases, and deterministic safety boundaries.
+A reusable Streamlit support platform that combines grounded knowledge retrieval, controlled business tools, human handoff, persistent cases, and deterministic safety boundaries. It is designed to demonstrate business value without giving a language model unrestricted authority over refunds, cancellations, accounts, or payments.
 
 ## Problem
 Businesses receive repetitive support requests, but automation must not invent policy, expose private data, or perform irreversible actions without review.
@@ -14,6 +21,12 @@ Businesses receive repetitive support requests, but automation must not invent p
 - Persistent support cases with lifecycle and duplicate protection
 - Action allowlist, human-review states, evidence validation, tenant context, admin authentication, redaction, and audit timing
 - Controlled evaluation and reliability tests
+
+## Who it is for
+Businesses with repetitive support questions and a need for reliable first-line assistance: ecommerce teams, SaaS support teams, online stores, service businesses, and SMB or mid-market operations.
+
+## Client demonstration
+Use [documentation/CLIENT_DEMO_GUIDE.md](documentation/CLIENT_DEMO_GUIDE.md) for a 10-15 minute walkthrough covering order lookup, follow-up memory, grounded policy answers, human escalation, safety boundaries, and the Administrator dashboard. Use [documentation/CLIENT_ONBOARDING.md](documentation/CLIENT_ONBOARDING.md) to prepare a new business configuration.
 
 ## Architecture
 `CUSTOMER -> SECURITY / TENANT CONTEXT -> MEMORY / CONTEXT -> DETERMINISTIC PREFLIGHT -> DECISION -> CONTROLLED ORCHESTRATION -> ACTION SAFETY -> RAG / BUSINESS TOOL / CASE -> RESULT VALIDATION -> FINAL RESPONSE -> AUDIT`
@@ -46,7 +59,9 @@ Secrets come from environment configuration. Admin passwords use PBKDF2 hashes. 
 The protected admin area provides Business Setup, Knowledge Base status, Integrations readiness, Production Readiness, a state-derived Go-Live Checklist, Overview, Cases, AI & Safety, Observability, Evaluation, and readiness details. Business Setup remains an environment/deployment configuration view; it does not write settings or secrets into source code. Knowledge Base status reports the configured directory, PDF inventory, customer-policy document count, and the current session's existing search-index availability. The checklist reports actionable READY, WARNING, or NOT READY states from actual system checks. It never displays API keys, password hashes, authorization headers, raw questions, or credentials.
 
 ## Evaluation & Testing
-`evaluation_cases.json` contains 14 controlled scenarios. `evaluate_agent.py` checks structured routing, safety, evidence, tenant, security, and admin behavior. The full regression suite currently covers Days 6, 8, 9, 10, 11, 12, and 13.
+`evaluation_cases.json` contains 14 controlled scenarios. `evaluate_agent.py` checks structured routing, safety, evidence, tenant, security, and admin behavior. The regression suite covers routing, orchestration, integrations, case management, action safety, onboarding, and production acceptance.
+
+The verified repository baseline is 119/119 automated tests passing, including 22 production-acceptance tests covering realistic customer behavior, prompt injection, input validation, action safety, RAG evidence, provider failures, case lifecycle, tenant boundaries, admin access, audit redaction, and error boundaries. These are controlled automated checks, not a statistically representative production benchmark.
 
 ## Local Setup
 ```text
@@ -89,6 +104,12 @@ Use `operational.py` for safe health and production-readiness checks. Before dep
 - Tenant isolation is configuration-controlled foundation code, not full SaaS infrastructure.
 - Evaluation is controlled and small; it is not a statistically representative benchmark.
 - Demo data and generic REST order integration are the only business integrations implemented.
+
+## Scope clarity
+- **Implemented:** grounded support answers, demo and generic REST order lookup, billing/account lookup, human cases, protected administration, readiness checks, audit-safe observability, and deterministic safety boundaries.
+- **Configurable:** business identity, support hours, escalation settings, approved documents, local data paths, provider mode, REST field mapping, and deployment settings.
+- **Intentionally restricted:** refunds, cancellations, compensation, payment changes, account mutations, arbitrary tool calls, and unsupported requests.
+- **Future/custom work:** commerce connectors, CRM/helpdesk/messaging channels, enterprise SSO, production database infrastructure, and full SaaS tenancy.
 
 ## Future Roadmap
 Shopify, WooCommerce, CRM, WhatsApp, helpdesk, email, enterprise SSO, production database, distributed rate limiting, richer evaluation data, deployment automation, and advanced analytics.

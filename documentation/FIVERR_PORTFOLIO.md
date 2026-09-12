@@ -1,10 +1,13 @@
-# Fiverr and Portfolio Positioning
+# AI Customer Support Agent with RAG, Business Integrations, Human Escalation, Safety Controls, and Admin Dashboard
 
 ## 1. Suggested Gig/Product Title
 Configurable AI Customer Support Agent with RAG, Business Tools, Human Handoff, and Safety Controls
 
 ## 2. Short Professional Description
 I build configurable AI customer-support systems that answer from approved business documents, connect to controlled business data, escalate sensitive cases to human teams, and preserve safe operational boundaries. The platform is designed for practical support automation rather than unrestricted chatbot behavior.
+
+## 2A. Client Problem
+Support teams need faster answers to repetitive questions, but cannot safely delegate refunds, account changes, or policy decisions to an unrestricted model. This service provides a grounded first-line support workflow with explicit human-review boundaries and operational visibility.
 
 ## 3. Services and Features
 - Streamlit customer-support interface
@@ -21,6 +24,9 @@ I build configurable AI customer-support systems that answer from approved busin
 ## 4. What the Client Provides
 Business name and support hours, approved policies and product documents, sample or API business data, desired escalation rules, provider API documentation, branding preferences, and deployment requirements.
 
+## 4A. What Is Delivered
+The delivered scope can include the configured Streamlit support application, approved-document knowledge base, demo or REST order provider setup, bounded customer workflows, persistent support cases, protected Administrator dashboard, readiness review, deployment configuration guidance, and acceptance-test evidence. Exact integration and infrastructure scope is agreed per client.
+
 ## 5. What Can Be Customized
 Business identity, support language, knowledge documents, categories, case fields, safe read-only tools, REST field mapping, provider status handling, admin metrics, response tone, and deployment configuration.
 
@@ -32,6 +38,9 @@ The current implementation includes local demo data and a generic REST order ada
 
 ## 7. Safety and Security Features
 Environment-based secrets, PBKDF2 admin password hashes, bounded input, untrusted-document boundaries, deterministic action allowlists, human-review states, evidence checks, tenant-aware storage, secret-redacted audit output, and fail-closed unsupported actions.
+
+## 7A. Deployment
+The current deployment model is Streamlit Community Cloud connected to a Git repository, with secrets configured through the deployment secret store. Production persistence, monitoring, backups, identity controls, and incident response are deployment-specific work and are not implied by the MVP.
 
 ## 8. Suggested Demo Flow
 1. Check `ORD-1001`.
