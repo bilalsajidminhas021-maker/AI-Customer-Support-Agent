@@ -17,8 +17,10 @@ The platform combines:
 - action safety and evidence validation
 - tenant-aware configuration and admin controls
 - audit and lightweight operational visibility
+- business onboarding view with knowledge, integration, production-readiness, and go-live status
 
 ## Key Business Value
+
 - reduce repetitive support workload
 - provide 24/7 first-line assistance when deployed with suitable infrastructure
 - connect support responses to business data
@@ -26,6 +28,9 @@ The platform combines:
 - prevent unsupported business promises
 - maintain an auditable operational trail
 - reuse the same core platform across multiple business configurations
+
+## Business Onboarding
+The protected Administrator area shows the configured business identity, support hours, escalation state, knowledge-base document readiness, order-provider configuration status, production checks, and a state-derived go-live checklist. Environment settings and secrets remain outside source code; the onboarding view does not store credentials or accept arbitrary filesystem paths.
 
 ## Target Customers
 Ecommerce businesses, SaaS companies, online stores, service businesses, support teams, and SMB or mid-market organizations.

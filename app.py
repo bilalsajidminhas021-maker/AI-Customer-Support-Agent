@@ -56,7 +56,11 @@ from tools import (
     validate_tool_result,
 )
 from orchestration import ControlledOrchestrator
-from knowledge import classify_document, retrieve_knowledge
+from knowledge import (
+    classify_document,
+    discover_knowledge_base_files,
+    retrieve_knowledge,
+)
 
 
 MAX_HISTORY_MESSAGES = MAX_CONVERSATION_HISTORY
@@ -260,26 +264,7 @@ def retrieve_rag_evidence(
 st.session_state.setdefault("conversation_history", [])
 st.session_state.setdefault("pending_tool", None)
 st.session_state.setdefault("support_case_fingerprints", {})
-
-
-def discover_knowledge_base_files(knowledge_base_path):
-    """Return PDF knowledge documents from the configured directory."""
-
-    directory = Path(knowledge_base_path).expanduser()
-
-    if not directory.is_dir():
-        return []
-
-    try:
-        return sorted(
-            (
-                path for path in directory.iterdir()
-                if path.is_file() and path.suffix.lower() == ".pdf"
-            ),
-            key=lambda path: path.name.lower()
-        )
-    except OSError:
-        return []
+st.session_state.setdefault("knowledge_index_available", False)
 
 
 def extract_pdf_documents(sources):
@@ -474,6 +459,8 @@ st.subheader("Knowledge base")
 knowledge_base_files = discover_knowledge_base_files(
     KNOWLEDGE_BASE_PATH
 )
+if not knowledge_base_files:
+    st.session_state["knowledge_index_available"] = False
 
 if knowledge_base_files:
     st.info(
@@ -558,7 +545,9 @@ if uploaded_files or knowledge_base_files:
     with st.spinner("Preparing documents for search..."):
         try:
             vector_db = create_vector_db(document_payload)
+            st.session_state["knowledge_index_available"] = True
         except Exception:
+            st.session_state["knowledge_index_available"] = False
             log_audit_event(
                 status="failed",
                 error="Unexpected error while preparing document search."

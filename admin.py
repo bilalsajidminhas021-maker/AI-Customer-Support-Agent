@@ -10,14 +10,20 @@ from config import (
     ADMIN_PASSWORD_HASH,
     ADMIN_USERNAME,
     BUSINESS_API_BASE_URL,
+    BUSINESS_EMAIL,
+    BUSINESS_DATA_PATH,
+    BUSINESS_NAME,
     BUSINESS_PROVIDER,
+    ESCALATION_ENABLED,
     INPUT_MAX_LENGTH,
+    KNOWLEDGE_BASE_PATH,
     MAX_CONVERSATION_HISTORY,
     MAX_ORCHESTRATION_STEPS,
     RAG_RELEVANCE_THRESHOLD,
     validate_configuration,
 )
 from evaluate_agent import run_evaluation
+from knowledge import knowledge_base_status
 from operational import health_status, production_readiness
 from security import authenticate_admin
 from tenant_context import TenantContext
@@ -79,6 +85,72 @@ def _case_counts():
     return counts
 
 
+def _readiness_status(ok, *, warning=False):
+    if ok:
+        return "READY"
+    return "WARNING" if warning else "NOT READY"
+
+
+def build_go_live_checklist(readiness, knowledge, evaluation):
+    """Build safe, state-derived go-live findings for administrators."""
+
+    checks = readiness["checks"]
+    knowledge_documents_available = knowledge["pdf_count"] > 0
+    evaluation_ready = bool(evaluation and not evaluation.get("failed"))
+    return [
+        {
+            "Item": "Business configuration",
+            "Status": _readiness_status(checks["configuration"]["ok"]),
+            "Details": "Environment configuration is valid." if checks["configuration"]["ok"] else "Review the configuration settings shown above.",
+        },
+        {
+            "Item": "Knowledge base",
+            "Status": _readiness_status(knowledge_documents_available, warning=knowledge["directory_exists"]),
+            "Details": f"{knowledge['pdf_count']} PDF document(s) available." if knowledge_documents_available else "Add approved PDF documents to the configured knowledge-base directory.",
+        },
+        {
+            "Item": "Knowledge index",
+            "Status": _readiness_status(knowledge["index_available"], warning=knowledge_documents_available),
+            "Details": "The current session has a searchable index." if knowledge["index_available"] else "Open the customer workflow and build the index from readable PDFs.",
+        },
+        {
+            "Item": "Business/order data",
+            "Status": _readiness_status(checks["business_data"]["usable"]),
+            "Details": "Business data is available." if checks["business_data"]["usable"] else "Provide the configured business data file.",
+        },
+        {
+            "Item": "Order integration",
+            "Status": _readiness_status(checks["provider"]["ok"]),
+            "Details": checks["provider"]["message"].capitalize() + ".",
+        },
+        {
+            "Item": "Security configuration",
+            "Status": _readiness_status(checks["api_key"]["ok"] and checks["admin_security"]["ok"]),
+            "Details": "Required security configuration is present." if checks["api_key"]["ok"] and checks["admin_security"]["ok"] else "Configure the required application and administrator security settings.",
+        },
+        {
+            "Item": "Admin authentication",
+            "Status": _readiness_status(checks["admin_security"]["ok"]),
+            "Details": "Administrator authentication is configured." if checks["admin_security"]["ok"] else "Configure the administrator password hash in deployment secrets.",
+        },
+        {
+            "Item": "Audit/observability",
+            "Status": _readiness_status(checks["audit_storage"]["usable"]),
+            "Details": "Audit storage is configured." if checks["audit_storage"]["usable"] else "Configure an available audit storage path.",
+        },
+        {
+            "Item": "Evaluation readiness",
+            "Status": _readiness_status(evaluation_ready, warning=evaluation is not None),
+            "Details": "Controlled evaluation passed." if evaluation_ready else "Run and review the controlled evaluation suite.",
+        },
+        {
+            "Item": "Deployment readiness",
+            "Status": _readiness_status(readiness["ready"]),
+            "Details": "All required operational checks passed." if readiness["ready"] else "Resolve the failed readiness checks shown below.",
+        },
+    ]
+
+
 def render_admin_area(context: TenantContext):
     """Render the protected dashboard and return whether admin mode is active."""
 
@@ -105,10 +177,84 @@ def render_admin_area(context: TenantContext):
 
     st.header("Business administration")
     configuration_errors = validate_configuration()
-    readiness = production_readiness(context)
-    health = health_status(context)
+    knowledge = knowledge_base_status(
+        context.knowledge_base_path,
+        index_available=st.session_state.get("knowledge_index_available", False),
+    )
+    readiness = production_readiness(
+        context,
+        knowledge_index_available=knowledge["index_available"],
+    )
+    health = health_status(
+        context,
+        knowledge_index_available=knowledge["index_available"],
+    )
+    evaluation = None
+    try:
+        evaluation = run_evaluation()
+    except (OSError, ValueError, json.JSONDecodeError):
+        pass
     if configuration_errors:
         st.error("Configuration needs attention. Sensitive values are not displayed.")
+
+    st.subheader("Business Setup")
+    st.dataframe([
+        {"Setting": "Business name", "Value": BUSINESS_NAME},
+        {"Setting": "Business email", "Value": BUSINESS_EMAIL or "Not configured"},
+        {"Setting": "Support hours", "Value": context.support_hours},
+        {"Setting": "Escalation", "Value": "Enabled" if ESCALATION_ENABLED else "Disabled"},
+        {"Setting": "Knowledge base path", "Value": KNOWLEDGE_BASE_PATH},
+        {"Setting": "Business data path", "Value": BUSINESS_DATA_PATH},
+        {"Setting": "Order provider", "Value": BUSINESS_PROVIDER},
+        {"Setting": "Provider status", "Value": readiness["checks"]["provider"]["message"].capitalize()},
+    ], hide_index=True, use_container_width=True)
+
+    st.subheader("Knowledge Base")
+    st.dataframe([
+        {"Check": "Directory", "Status": "Ready" if knowledge["directory_exists"] else "Missing"},
+        {"Check": "PDF documents", "Status": knowledge["pdf_count"]},
+        {"Check": "Customer-policy PDFs", "Status": knowledge["customer_policy_pdf_count"]},
+        {"Check": "Index/cache", "Status": "Available" if knowledge["index_available"] else "Not available"},
+        {"Check": "Readiness", "Status": "Ready" if knowledge["ready"] else "Needs attention"},
+    ], hide_index=True, use_container_width=True)
+    if knowledge["document_names"]:
+        st.caption("Available documents: " + ", ".join(knowledge["document_names"]))
+    elif knowledge["directory_exists"]:
+        st.info("No PDF documents are available in the configured knowledge-base directory.")
+    else:
+        st.warning("The configured knowledge-base directory is not available.")
+
+    st.subheader("Integrations")
+    provider = readiness["checks"]["provider"]
+    st.dataframe([
+        {"Setting": "Provider type", "Value": provider["provider_type"]},
+        {"Setting": "Configuration status", "Value": provider["message"].capitalize()},
+        {"Setting": "Endpoint", "Value": "Configured" if provider["endpoint_configured"] else "Not configured"},
+        {"Setting": "Authentication", "Value": "Configured" if provider["authentication_configured"] else "Not configured"},
+        {"Setting": "Readiness", "Value": "READY" if provider["ok"] else "NOT READY"},
+    ], hide_index=True, use_container_width=True)
+
+    st.subheader("Production Readiness")
+    readiness_rows = [
+        {"Check": "Administrator authentication", "Status": _readiness_status(readiness["checks"]["admin_security"]["ok"])},
+        {"Check": "Google/Gemini API", "Status": _readiness_status(readiness["checks"]["api_key"]["ok"])},
+        {"Check": "Knowledge base", "Status": _readiness_status(readiness["checks"]["knowledge_base"]["usable"])},
+        {"Check": "Knowledge index", "Status": _readiness_status(readiness["checks"]["knowledge_index"]["available"])},
+        {"Check": "Business data", "Status": _readiness_status(readiness["checks"]["business_data"]["usable"])},
+        {"Check": "Order provider", "Status": _readiness_status(readiness["checks"]["provider"]["ok"])},
+        {"Check": "Audit logging", "Status": _readiness_status(readiness["checks"]["audit_storage"]["usable"])},
+        {"Check": "Support case storage", "Status": _readiness_status(readiness["checks"]["case_storage"]["usable"])},
+        {"Check": "Evaluation suite", "Status": _readiness_status(bool(evaluation and not evaluation.get("failed")), warning=evaluation is not None)},
+    ]
+    st.dataframe(readiness_rows, hide_index=True, use_container_width=True)
+    st.metric("Overall readiness", "READY" if readiness["ready"] else "NOT READY")
+
+    st.subheader("Go-Live Checklist")
+    st.dataframe(
+        build_go_live_checklist(readiness, knowledge, evaluation),
+        hide_index=True,
+        use_container_width=True,
+    )
 
     st.subheader("Overview")
     overview = st.columns(5)
@@ -138,7 +284,7 @@ def render_admin_area(context: TenantContext):
         {"Setting": "Human-required status", "Value": REQUIRES_HUMAN},
     ], hide_index=True, use_container_width=True)
 
-    st.subheader("Integration")
+    st.subheader("Integration details")
     st.dataframe([
         {"Setting": "Provider type", "Value": BUSINESS_PROVIDER},
         {"Setting": "Connection status", "Value": "Configured" if readiness["checks"]["provider"]["ok"] else "Needs setup"},
@@ -153,15 +299,14 @@ def render_admin_area(context: TenantContext):
         st.info("No recent structured events are available.")
 
     st.subheader("Evaluation")
-    try:
-        evaluation = run_evaluation()
+    if evaluation is not None:
         st.dataframe([
             {"Metric": "Controlled scenarios", "Value": evaluation["total"]},
             {"Metric": "Passed", "Value": evaluation["passed"]},
             {"Metric": "Evaluation status", "Value": "Passed" if not evaluation["failed"] else "Review required"},
         ], hide_index=True, use_container_width=True)
         st.caption("Controlled evaluation suite, not a statistically representative production benchmark.")
-    except (OSError, ValueError, json.JSONDecodeError):
+    else:
         st.warning("The controlled evaluation report is unavailable.")
 
     with st.expander("Production readiness details"):

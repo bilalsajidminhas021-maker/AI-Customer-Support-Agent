@@ -58,7 +58,7 @@
 **Status: FOUNDATION/PARTIAL.** `TenantContext` centralizes business identity and configured data boundaries. It is suitable for a single-business deployment and future adapter work, not full SaaS tenancy.
 
 ## 20. Admin Controls
-**Status: IMPLEMENTED.** Authenticated administrators receive Overview, Cases, AI & Safety, Integration, Observability, Evaluation, and readiness details. Secrets, credentials, raw customer questions, and unnecessary PII are excluded.
+**Status: IMPLEMENTED.** Authenticated administrators receive Business Setup, Knowledge Base inventory and readiness, Integration readiness, Production Readiness, a state-derived Go-Live Checklist, Overview, Cases, AI & Safety, Observability, Evaluation, and detailed readiness information. The view reuses environment-backed configuration, the existing knowledge discovery and FAISS session index, and `operational.py` checks. It is read-only: it does not write secrets, accept arbitrary paths, or create a second vector store. Secrets, credentials, raw customer questions, and unnecessary PII are excluded.
 
 ## 21. Audit & Observability
 **Status: IMPLEMENTED.** JSONL audit events include safe status fields, tenant identity, optional operation names, elapsed duration, and per-operation timing. Audit failure is non-fatal.
@@ -71,6 +71,8 @@
 
 ## 24. Deployment Preparation
 **Status: FOUNDATION/PARTIAL.** `operational.py` exposes safe health and readiness status. Deployment still requires managed secrets, production persistence, monitoring, backups, identity review, and environment-specific validation.
+
+The Administrator Go-Live Checklist summarizes actual configuration, knowledge, provider, security, audit, evaluation, and deployment state. A warning or not-ready item includes a short corrective action. Environment values and secrets remain deployment configuration and must stay outside Git/source code.
 
 ## 25. Reusability Across Clients
 **Status: FOUNDATION/PARTIAL.** Businesses can change environment settings, knowledge documents, local business data, provider configuration, and case paths without rebuilding routing. Client-specific adapters remain planned.

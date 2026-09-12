@@ -15,6 +15,7 @@ I build configurable AI customer-support systems that answer from approved busin
 - human escalation and persistent support cases
 - action safety and evidence validation
 - admin dashboard, audit records, and readiness checks
+- business onboarding, knowledge-base readiness, integration status, and go-live checklist
 - controlled evaluation and reliability tests
 
 ## 4. What the Client Provides
@@ -22,6 +23,9 @@ Business name and support hours, approved policies and product documents, sample
 
 ## 5. What Can Be Customized
 Business identity, support language, knowledge documents, categories, case fields, safe read-only tools, REST field mapping, provider status handling, admin metrics, response tone, and deployment configuration.
+
+## Onboarding and Go-Live
+The protected Administrator area provides safe Business Setup visibility, PDF and customer-policy readiness, existing search-index status, demo or REST provider readiness, production checks, and an actionable go-live checklist. Secrets remain in deployment configuration and are never rendered or committed.
 
 ## 6. Integration Options
 The current implementation includes local demo data and a generic REST order adapter. Custom APIs can be added behind the existing provider boundary. Shopify, WooCommerce, CRM, WhatsApp, helpdesk, email, and enterprise SSO are possible future additions and are scoped separately; they are not included by default.

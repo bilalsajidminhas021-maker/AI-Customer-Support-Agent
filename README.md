@@ -43,7 +43,7 @@ Secrets come from environment configuration. Admin passwords use PBKDF2 hashes. 
 `tenant_context.py` centralizes business identity and configured storage boundaries. The current deployment is tenant-aware foundation code, not full SaaS multi-tenancy.
 
 ## Admin Controls
-The protected admin area provides Overview, Cases, AI & Safety, Integration, Observability, Evaluation, and readiness details. It never displays API keys, password hashes, authorization headers, raw questions, or credentials.
+The protected admin area provides Business Setup, Knowledge Base status, Integrations readiness, Production Readiness, a state-derived Go-Live Checklist, Overview, Cases, AI & Safety, Observability, Evaluation, and readiness details. Business Setup remains an environment/deployment configuration view; it does not write settings or secrets into source code. Knowledge Base status reports the configured directory, PDF inventory, customer-policy document count, and the current session's existing search-index availability. The checklist reports actionable READY, WARNING, or NOT READY states from actual system checks. It never displays API keys, password hashes, authorization headers, raw questions, or credentials.
 
 ## Evaluation & Testing
 `evaluation_cases.json` contains 14 controlled scenarios. `evaluate_agent.py` checks structured routing, safety, evidence, tenant, security, and admin behavior. The full regression suite currently covers Days 6, 8, 9, 10, 11, 12, and 13.
@@ -58,6 +58,8 @@ streamlit run app.py
 
 ## Environment Configuration
 Copy the shape of `.env` locally and keep it ignored. Configure `GOOGLE_API_KEY`, `BUSINESS_NAME`, `BUSINESS_EMAIL`, `SUPPORT_HOURS`, `TENANT_ID`, `KNOWLEDGE_BASE_PATH`, `BUSINESS_DATA_PATH`, `SUPPORT_CASE_STORAGE_PATH`, `AUDIT_STORAGE_PATH`, `BUSINESS_PROVIDER`, and `ADMIN_PASSWORD_HASH`. For REST use `BUSINESS_API_BASE_URL`, `BUSINESS_API_KEY`, and `BUSINESS_API_TIMEOUT`. Never commit secret values.
+
+The Administrator Business Setup view shows these deployment-controlled values and safe configured/not-configured statuses. Add approved PDF files to the configured knowledge-base directory; the existing application flow extracts and indexes them with the current FAISS and metadata filtering pipeline. The Administrator Knowledge Base view reports readiness but does not accept arbitrary paths or replace the existing index implementation. The Go-Live Checklist is an operational summary, not a substitute for deployment, secret, monitoring, backup, or identity configuration.
 
 Generate an admin hash locally:
 ```text

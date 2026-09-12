@@ -4,6 +4,7 @@ import hashlib
 import os
 import re
 from collections import defaultdict
+from pathlib import Path
 
 from config import RAG_RELEVANCE_THRESHOLD
 
@@ -32,6 +33,45 @@ _CUSTOMER_POLICY_PREFIX = re.compile(
     r"^customer[_-]policy(?:__|[-_])",
     re.IGNORECASE,
 )
+
+
+def discover_knowledge_base_files(knowledge_base_path):
+    """Return PDF knowledge documents from the configured directory."""
+
+    directory = Path(knowledge_base_path).expanduser()
+    if not directory.is_dir():
+        return []
+
+    try:
+        return sorted(
+            (
+                path for path in directory.iterdir()
+                if path.is_file() and path.suffix.lower() == ".pdf"
+            ),
+            key=lambda path: path.name.lower(),
+        )
+    except OSError:
+        return []
+
+
+def knowledge_base_status(knowledge_base_path, *, index_available=False):
+    """Return safe document and index readiness details."""
+
+    directory = Path(knowledge_base_path).expanduser()
+    documents = discover_knowledge_base_files(knowledge_base_path)
+    customer_policy_documents = [
+        path for path in documents
+        if classify_document(path.name).get("customer_policy") is True
+    ]
+    return {
+        "directory_configured": bool(str(knowledge_base_path).strip()),
+        "directory_exists": directory.is_dir(),
+        "pdf_count": len(documents),
+        "document_names": [path.name for path in documents],
+        "customer_policy_pdf_count": len(customer_policy_documents),
+        "index_available": bool(index_available),
+        "ready": bool(documents and index_available),
+    }
 
 
 def normalize_retrieval_query(query):
