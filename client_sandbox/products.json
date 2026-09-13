@@ -1,0 +1,10 @@
+{
+  "fictional": true,
+  "currency": "USD",
+  "products": [
+    {"product_id": "NT-HUB-01", "name": "NovaHub Mini", "category": "Smart home hub", "price": 79.99, "short_description": "A compact fictional hub for NovaTech-compatible home devices.", "return_eligible": true},
+    {"product_id": "NT-AUD-02", "name": "PulseBeam Headphones", "category": "Audio", "price": 149.99, "short_description": "Fictional wireless over-ear headphones with adaptive listening modes.", "return_eligible": true},
+    {"product_id": "NT-CHG-03", "name": "OrbitCharge Dock", "category": "Accessories", "price": 39.99, "short_description": "A fictional multi-device charging dock.", "return_eligible": true},
+    {"product_id": "NT-CLD-04", "name": "SkyView Camera", "category": "Smart home", "price": 129.99, "short_description": "A fictional indoor security camera for demonstration purposes.", "return_eligible": true}
+  ]
+}

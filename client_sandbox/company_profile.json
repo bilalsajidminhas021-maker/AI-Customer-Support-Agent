@@ -1,0 +1,22 @@
+{
+  "fictional": true,
+  "company_name": "NovaTech Store",
+  "business_type": "Fictional consumer electronics ecommerce retailer",
+  "description": "A fictional online store used to demonstrate configurable, controlled customer support workflows.",
+  "support_email": "support@novatech.example",
+  "support_hours": "Monday-Friday, 9:00 AM-5:00 PM",
+  "currency": "USD",
+  "website": "https://novatech.example",
+  "supported_channels": ["web chat", "email handoff"],
+  "business_rules": {
+    "approved_policy_source": "customer-facing knowledge-base documents",
+    "autonomous_actions": ["order lookup", "billing lookup", "account lookup", "policy retrieval"],
+    "restricted_actions": ["refunds", "cancellations", "compensation", "payment changes", "account changes"]
+  },
+  "escalation_rules": {
+    "human_review_required_for": ["refund requests", "billing disputes", "security concerns", "complaints", "explicit human requests"],
+    "case_behavior": "Create or reuse a controlled support case when escalation is enabled."
+  },
+  "order_system": "The demo uses the existing OrderDataProvider boundary with the local DemoOrderProvider. A real client can use the existing REST provider or a client-specific adapter.",
+  "knowledge_base": "Approved customer-facing policy documents are retrieved through the existing RAG pipeline. Unverified or missing policy evidence must not be invented."
+}
